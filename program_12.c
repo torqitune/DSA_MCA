@@ -52,9 +52,6 @@ void postorder(struct Node* root){                  //postorder uses LRN approac
     printf("%d  ",root->data);                      //N
 }
 
-
-
-
 bool search_tree(struct Node* root,int element){
     if(root == NULL)
         return false;
