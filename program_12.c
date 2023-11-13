@@ -8,8 +8,6 @@ struct Node{                                        //creating a struct for tree
     struct Node* right;
 };
 
-
-
 struct Node* createTree(){                          //this function will create a tree & return the root.
     struct Node* root = (struct Node*)malloc(sizeof(struct Node));      //dynamically creating a local root.
     int data;
