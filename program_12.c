@@ -8,6 +8,8 @@ struct Node{                                        //creating a struct for tree
     struct Node* right;
 };
 
+
+
 struct Node* createTree(){                          //this function will create a tree & return the root.
     struct Node* root = (struct Node*)malloc(sizeof(struct Node));      //dynamically creating a local root.
     int data;
@@ -52,18 +54,49 @@ void postorder(struct Node* root){                  //postorder uses LRN approac
     printf("%d  ",root->data);                      //N
 }
 
-bool search_tree(struct Node* root,int element){
-    if(root == NULL)
+
+
+
+bool search_tree(struct Node* root,int element){             //function to search an element
+    if(root == NULL)                                            //base case , if empty tree.
         return false;
-    if(root->data == element)
+    if(root->data == element)                               //another base case , if we found the element.
         return true;
-    if(element < root->data)
-        return search_tree(root->left,element);
-    else{
+    if(element < root->data)                                //if our element is in left subtree.
+        return search_tree(root->left,element);             //then make recursive call to left.
+    else{                                                   //else if the node is in right subtree then make right recursive call.
         return search_tree(root->right,element);
-    }
-    return false;
+    }   
+    return false;                                           //if none of the conditions are satisfied then we have not found our element.
 }
+
+
+struct Node* del_tree(struct Node* root,int element){                      //this will return then minimum element from left subtree of BST.
+    if(root == NULL)                                                       //if our list is already empty.
+        printf("**EMPTY TREE.**\n");
+    if(element < root->data)                                                //if element to be deleted is present in left subtree.
+        root->left = del_tree(root->left,element);                          //then reach till that node while also updating the current node.
+    else if(element > root->data)                                           //if element is to be deleted is present in right subtree.
+        root->right = del_tree(root->right,element);                        //then reach till that node and keep on updating the current node.
+    else{                                                                   //now we are at position where node has to be deleted.
+        if(root->left==NULL && root->right==NULL)                           //check if the node is leaf node or not, if it is a leaf node then return null so that it becomes null at that postion.
+            return NULL;
+        if(root->left==NULL || root->right==NULL){                          //if the node has one child either left or right may be present.
+            if(root->left)                                                  //if a left child is present then delete the current node and make the link of its left child.
+                return root->left;  
+            else                                                            //if a right child is present then delete the node and make a linkg of its right child.
+                return root->right;
+        }
+                                                                            //but if the node has both left and right child then delete we will find the maximum from the left subtree to replace its value.
+        struct Node* temp = root->left;                                     //making temp to initialize with left subtree where it will find maximum child.
+        while(temp->right != NULL)                                          //reaching till that node using while loop.
+            temp = temp->right;
+        root->data = temp->data;                                            //we replace the node to be deleted with maximum element from left subtree
+        root->left = del_tree(root->left,temp->data);                       //now we will use recursion to delete that maximum node which we replaced with the node to be deleted.
+    }
+    return root;
+}
+
 
 
 void menu_Tree(struct Node* root){
@@ -94,7 +127,24 @@ void menu_Tree(struct Node* root){
         menu_Tree(root);
     }
     else if(choice==2){
-        
+        int element;
+        delete:
+        printf("\nEnter element to be deleted : ");
+        if (scanf("%d", &element) != 1){ // Handling a case if user enters any alphabet or choice which is out of range , then we re-direct user to input choice again.
+            printf("\n***ENTER A VALID INTEGER***.\n");
+            while (getchar() != '\n'); // Clear the input buffer
+            goto delete;
+        }
+        if(root==NULL)
+            printf("\n***EMPTY TREE!***\n");
+        else if(!search_tree(root,element)){
+            printf("\n***Element NOT IN TREE***!");           
+        }
+        else{
+            root = del_tree(root,element);
+            printf("\n==DELETION DONE==");
+        }
+        menu_Tree(root);
     }
     else if(choice==3){
         int element;
